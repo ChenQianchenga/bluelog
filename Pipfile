@@ -1,0 +1,29 @@
+[[source]]
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+bootstrap-flask = "*"
+python-dotenv = "*"
+pymysql = "*"
+sqlalchemy = "==1.4.23"
+flask-migrate = "*"
+flask-sqlalchemy = "*"
+flask-mail = "*"
+cryptography = "*"
+flask-ckeditor = "*"
+flask-moment = "*"
+flask-debugtoolbar = "*"
+flask-pagedown = "*"
+flask-wtf = "*"
+flask = "==1.0.2"
+jinja2 = "==2.10"
+markupsafe = "==1.1.0"
+itsdangerous = "==0.24"
+
+[dev-packages]
+
+[requires]
+python_version = "3.8"
+python_full_version = "3.8.10"
