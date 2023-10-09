@@ -60,7 +60,11 @@ def register_blueprints(app):
 
 
 def register_template_context(app):
-    pass
+    @app.context_processor
+    def make_template_context():
+        admin = Admin.query.first()
+        categories = Category.query.order_by(Category.name).all()
+        return dict(admin=admin, categories=categories)
 
 
 def register_errors(app):
