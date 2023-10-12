@@ -25,6 +25,7 @@ faker = "*"
 flask-script = "*"
 flask-login = "*"
 werkzeug = "==2.0.0"
+unidecode = "*"
 
 [dev-packages]
 
