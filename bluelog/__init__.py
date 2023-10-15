@@ -13,7 +13,7 @@ from bluelog.blueprints import blog, admin, auth
 from bluelog.blueprints.admin import admin_bp
 from bluelog.blueprints.auth import auth_bp
 from bluelog.blueprints.blog import blog_bp
-from bluelog.extensions import bootstrap, db, ckeditor, mail, moment
+from bluelog.extensions import bootstrap, db, ckeditor, mail, moment, login_manager
 from bluelog.models import Admin, Category
 from bluelog.settings import config
 
@@ -51,11 +51,12 @@ def register_extension(app):
     ckeditor.init_app(app)
     mail.init_app(app)
     moment.init_app(app)
+    login_manager.init_app(app)
 
 
 def register_blueprints(app):
     app.register_blueprint(blog_bp)
-    app.register_blueprint(auth_bp, url_prefix='/admin')
+    app.register_blueprint(admin_bp, url_prefix='/admin')
     app.register_blueprint(auth_bp, url_prefix='/auth')
 
 
@@ -74,6 +75,44 @@ def register_errors(app):
 
 
 def register_commands(app):
+    @app.cli.command()
+    @click.option('--username', prompt=True, help='The username used to login.')
+    @click.option('--password', prompt=True, hide_input=True,
+                  confirmation_prompt=True, help='The password used to login.')
+    def init(username, password):
+        """Building Bluelog, just for you."""
+
+        click.echo('Initializing the database...')
+        db.create_all()
+
+        admin = Admin.query.first()
+        # 如果数据库中已经有管理员记录就更新用户名和密码
+        if admin is not None:
+            click.echo('The administrator already exists, updating...')
+            admin.username = username
+            admin.set_password(password)
+        # 否则创建新的管理员记录
+        else:
+            click.echo('Creating the temporary administrator account...')
+            admin = Admin(
+                username = username,
+                blog_title = 'Bluelog',
+                blog_sub_title="No, I'm the real thing.",
+                name='Admin',
+                about='Anything about you.'
+            )
+            admin.set_password(password)
+            db.session.add(admin)
+
+        category = Category.query.first()
+        if category is None:
+            click.echo('Creating the default category...')
+            category = Category(name='Default')
+            db.session.add(category)
+
+        db.session.commit()
+        click.echo('Done.')
+
     @app.cli.command()
     @click.option('--category', default=10, help='Quantity of categories, default is 10.')
     @click.option('--post', default=50, help='Quantity of posts, default is 50.')
