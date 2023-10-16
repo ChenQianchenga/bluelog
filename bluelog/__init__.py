@@ -8,12 +8,13 @@
 # --------------------------------------------------------------------------
 import os
 import click
+from flask_wtf.csrf import CSRFError
 from flask import Flask, render_template
 from bluelog.blueprints import blog, admin, auth
 from bluelog.blueprints.admin import admin_bp
 from bluelog.blueprints.auth import auth_bp
 from bluelog.blueprints.blog import blog_bp
-from bluelog.extensions import bootstrap, db, ckeditor, mail, moment, login_manager
+from bluelog.extensions import bootstrap, db, ckeditor, mail, moment, login_manager, csrf
 from bluelog.models import Admin, Category
 from bluelog.settings import config
 
@@ -52,6 +53,7 @@ def register_extension(app):
     mail.init_app(app)
     moment.init_app(app)
     login_manager.init_app(app)
+    csrf.init_app(app)
 
 
 def register_blueprints(app):
@@ -72,6 +74,10 @@ def register_errors(app):
     @app.errorhandler(400)
     def bad_request(e):
         return render_template('errors/400.html'), 400
+
+    @app.errorhandler(CSRFError)
+    def handle_csrf_error(e):
+        return render_template('errors/400.html', description=e.description), 400
 
 
 def register_commands(app):
@@ -95,8 +101,8 @@ def register_commands(app):
         else:
             click.echo('Creating the temporary administrator account...')
             admin = Admin(
-                username = username,
-                blog_title = 'Bluelog',
+                username=username,
+                blog_title='Bluelog',
                 blog_sub_title="No, I'm the real thing.",
                 name='Admin',
                 about='Anything about you.'
