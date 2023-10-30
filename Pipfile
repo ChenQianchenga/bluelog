@@ -26,6 +26,7 @@ flask-script = "*"
 flask-login = "*"
 werkzeug = "==2.0.0"
 unidecode = "*"
+email-validator = "*"
 
 [dev-packages]
 
