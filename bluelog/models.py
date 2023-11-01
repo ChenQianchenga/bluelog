@@ -41,6 +41,7 @@ class Category(db.Model):
     def delete(self):
         default_category = Category.query.get(1)
         posts = self.posts[:]
+        print(posts)
         for post in posts:
             post.category = default_category
         db.session.delete(self)

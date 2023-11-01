@@ -246,11 +246,11 @@ def delete_link(link_id):
 #     return send_from_directory(current_app.config['BLUELOG_UPLOAD_PATH'], filename)
 
 
-@admin_bp.route('/upload', methods=['POST'])
-def upload_image():
-    f = request.files.get('upload')
-    if not allowed_file(f.filename):
-        return upload_fail('Image only!')
-    f.save(os.path.join(current_app.config['BLUELOG_UPLOAD_PATH'], f.filename))
-    url = url_for('.get_image', filename=f.filename)
-    return upload_success(url, f.filename)
+# @admin_bp.route('/upload', methods=['POST'])
+# def upload_image():
+#     f = request.files.get('upload')
+#     if not allowed_file(f.filename):
+#         return upload_fail('Image only!')
+#     f.save(os.path.join(current_app.config['BLUELOG_UPLOAD_PATH'], f.filename))
+#     url = url_for('.get_image', filename=f.filename)
+#     return upload_success(url, f.filename)
